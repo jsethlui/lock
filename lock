@@ -2,25 +2,67 @@
 
 declare -r password="pass"
 
-echo -e "\nWelcome to L O C K"
+# start of title screen
+clear
+cat title_screen.txt
+echo -n "\n"
+# end of title screen
+
 while : ; do
 	echo -en "\nPassword: "
 	read -s user_password
-	[[ $user_password == $password ]] || echo -en "\n   Error: please try again"	
+	[[ $user_password == $password ]] || echo -en "\n   Error: incorrect password"	
 	[[ $user_password != $password ]] || break	# terminating condition
 done
 
-echo -en "\nSuccess"
-while getopts ":a:h" option; do
-	case $option in
-		a)
-			all_flag=1
-			;;
-		h)
-			help_flag=1
-			;;
-		*)
-			error_flag=1
-			;;
+# allowing user to select text editor of choice
+echo -e "\nSuccess: please select shell text editor of choice (default is Emacs)"
+sleep 0.3
+echo -e "[1] Emacs"
+echo -e "[2] VIM"
+echo -e "[3] Nano"
+echo -n "Input: "
+read user_input_text_editor
+case $user_input_text_editor in
+	1)
+		emacs_flag=1
+		;;
+	2)
+		vim_flag=1
+		;;
+	3) 
+		nano_flag=1
+		;;
+	*)
+		emacs_flag=1
+		;;
 	esac
-done
+
+# success page
+echo -ne "\nOpening sensitive data using "
+if [[ emacs_flag -eq 1 ]]; then
+	echo "Emacs"
+elif [[ vim_flag -eq 1 ]]; then
+	echo "Vim"
+elif [[ nano_flag -eq 1 ]]; then
+	echo "Nano"
+fi
+
+# opening with text editor of choice
+echo -n "\n"
+echo -ne '######...................  (33%)\r'
+sleep 1
+echo -ne '##############...........  (66%)\r'
+sleep 1
+echo -ne '########################   (100%)\r'
+sleep 1
+echo -ne '\n'
+
+# opening with text editor
+# if [[ emacs_flag -eq 1 ]]; then
+# 	emacs data.txt
+# elif [[ vim_flag -eq 1 ]]; then
+# 	vim data.txt
+# elif [[ nano_flag -eq 1 ]]; then
+# 	nano data.txt
+# fi
