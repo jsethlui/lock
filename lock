@@ -5,10 +5,15 @@ declare -r password="pass"
 # start of title screen
 clear
 cat title_screen.txt
+echo -e "\n"
 # end of title screen
 
-while getopts ":evnh" option; do
+# getting options from user
+while getopts ":aevnh" option; do
     case $option in
+        a) # all
+            all_flag=1
+            ;;
         e) # emacs
             emacs_flag=1
             ;;
@@ -18,7 +23,7 @@ while getopts ":evnh" option; do
         n) # nano
             nano_flag=1
             ;;
-        h)
+        h) # help flag
             help_flag=1
             ;;
         *)  # default
@@ -37,6 +42,7 @@ fi
 if [[ help_flag -eq 1 ]]; then
     echo -e "\t\nSyntax: lock [-evnh]"
     echo -e "\toptions:"
+    echo -e "\ta            Return all sensitive data"
     echo -e "\te            Access sensitive data using Emacs"
     echo -e "\tv            Access sensitive data using Vim"
     echo -e "\tn            Access sensitive data using Nano"
@@ -44,30 +50,31 @@ if [[ help_flag -eq 1 ]]; then
     exit 0  # exit success
 fi
 
+# emacs flag set
+if [[ emacs_flag -eq 1 ]]; then
+    echo -ne "\n\nOpening sensitive data using Emacs"
+fi
+
+# vim flag set
+if [[ vim_flag -eq 1 ]]; then
+    echo -ne "\n\nOpening sensitive data using Vim"
+fi
+
+# nano flag set
+if [[ nano_flag -eq 1 ]]; then
+    echo -ne "\n\nOpening sensitive data using Nano"
+fi
+
+# prompting user to enter password
 while : ; do
-    echo -en "\n\nEnter Password: "
+    echo -en "\nEnter Password: "
     read -s user_password
     [[ $user_password == $password ]] || echo -en "\n   Error: incorrect password"  
     [[ $user_password != $password ]] || break  # terminating condition
 done
 
-# emacs flag set
-if [[ emacs_flag -eq 1 ]]; then
-    echo -ne "\nOpening sensitive data using Emacs"
-fi
-
-# vim flag set
-if [[ vim_flag -eq 1 ]]; then
-    echo -ne "\nOpening sensitive data using Vim"
-fi
-
-# nano flag set
-if [[ nano_flag -eq 1 ]]; then
-    echo -ne "\nOpening sensitive data using Nano"
-fi
-
 # opening with text editor of choice
-echo -ne "\n"
+echo -ne "\nSuccess. Now loading...\n"
 echo -ne '[######...................]   33%  \r'
 sleep 1
 echo -ne '[##############...........]   66%  \r'
@@ -83,4 +90,6 @@ elif [[ vim_flag -eq 1 ]]; then
     vim data.txt
 elif [[ nano_flag -eq 1 ]]; then
     nano data.txt
+elif [[ all_flag -eq 1 ]]; then
+    cat data.txt | less
 fi
