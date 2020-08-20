@@ -27,7 +27,13 @@ while getopts ":evnh" option; do
     esac
 done
 
-# help flag
+# error flag set
+if [[ error_flag -eq 1 ]]; then
+    echo -ne "\n\nError: invalid option, refer to help page using lock -h\n"
+    exit 1  # exit error
+fi
+
+# help flag set
 if [[ help_flag -eq 1 ]]; then
     echo -e "\t\nSyntax: lock [-evnh]"
     echo -e "\toptions:"
@@ -35,11 +41,11 @@ if [[ help_flag -eq 1 ]]; then
     echo -e "\tv            Access sensitive data using Vim"
     echo -e "\tn            Access sensitive data using Nano"
     echo -e "\th            Show help page"
-    continue=0  # assign variable, continue, to false
+    exit 0  # exit success
 fi
 
 while : ; do
-    echo -en "\n\nPassword: "
+    echo -en "\n\nEnter Password: "
     read -s user_password
     [[ $user_password == $password ]] || echo -en "\n   Error: incorrect password"  
     [[ $user_password != $password ]] || break  # terminating condition
@@ -58,11 +64,6 @@ fi
 # nano flag set
 if [[ nano_flag -eq 1 ]]; then
     echo -ne "\nOpening sensitive data using Nano"
-fi
-
-# error flag set
-if [[ error_flag -eq 1 ]]; then
-    echo -ne "\nError: invalid option, refer to help page"
 fi
 
 # opening with text editor of choice
