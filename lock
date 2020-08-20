@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+declare -r password="pass"
+
+echo -e "\nWelcome to L O C K"
+while : ; do
+	echo -en "\nPassword: "
+	read -s user_password
+	[[ $user_password == $password ]] || echo -en "\n   Error: please try again"	
+	[[ $user_password != $password ]] || break	# terminating condition
+done
+
+echo -en "\nSuccess"
+while getopts ":a:h" option; do
+	case $option in
+		a)
+			all_flag=1
+			;;
+		h)
+			help_flag=1
+			;;
+		*)
+			error_flag=1
+			;;
+	esac
+done
