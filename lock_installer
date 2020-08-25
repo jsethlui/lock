@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+echo -ne "Welcome to Lock Installer"
+echo -e "\nPlease select from the following: "
+echo -e "   [1] Set password + install"
+echo -e "   [2] Change password"
+echo -e "   [3] Remove all protected data"
+echo -e "   [4] Uninstall"
+echo -ne "User Input: "
+read user_input
+
+case $user_input in 
+	1)	# set password 
+		set_password=1
+		;;
+	2)	# change password
+		change_password=1
+		;;
+	3)	# remove flag
+		remove_flag=1
+		;;
+	4)
+		uninstall_flag=1
+		;;
+	*)	# error flag
+		error_flag=1
+		;;
+esac
+
+
+# set password flag set
+if [[ set_password -eq 1 ]]; then
+	echo -ne "Setting and installing new password"
+	echo -ne "\nNew Password: "
+	read -s user_input_pass
+	sed -i "3i\\$user_input_pass" lock	# sets password to line 3 of lock script
+fi

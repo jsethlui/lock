@@ -9,7 +9,7 @@ echo -e "\n"
 # end of title screen
 
 # getting options from user
-while getopts ":aevnh" option; do
+while getopts "aevnh" option; do
     case $option in
         a) # all
             all_flag=1
@@ -32,9 +32,32 @@ while getopts ":aevnh" option; do
     esac
 done
 
+# detecting if any arguments are selected
+if [[ $# -eq 0 ]]; then
+    echo -ne "[0] Emacs"
+    echo -ne "\n[1] Vim"
+    echo -ne "\n[2] Nano"
+    echo -ne "\nPlease select the text editor shell: "
+    read user_text_editor_input
+    case $user_text_editor_input in
+    1) # emacs
+        emacs_flag=1
+        ;;
+    2) #vim
+        vim_flag=1
+        ;;
+    3) #nano
+        nano_flag=1
+        ;;
+    *) # default -> error
+        error_flag=1
+        ;;
+    esac
+fi
+
 # error flag set
 if [[ error_flag -eq 1 ]]; then
-    echo -ne "\n\nError: invalid option, refer to help page using lock -h\n"
+    echo -ne "\nError: invalid option, refer to help page using lock -h\n"
     exit 1  # exit error
 fi
 
@@ -52,21 +75,21 @@ fi
 
 # emacs flag set
 if [[ emacs_flag -eq 1 ]]; then
-    echo -ne "\nOpening sensitive data using Emacs"
+    echo -ne "Opening sensitive data using Emacs"
 fi
 
 # vim flag set
 if [[ vim_flag -eq 1 ]]; then
-    echo -ne "\nOpening sensitive data using Vim"
+    echo -ne "Opening sensitive data using Vim"
 fi
 
 # nano flag set
 if [[ nano_flag -eq 1 ]]; then
-    echo -ne "\nOpening sensitive data using Nano"
+    echo -ne "Opening sensitive data using Nano"
 fi
 
 if [[ all_flag -eq 1 ]]; then
-    echo -ne "\nPrinting sensitive data to console"
+    echo -ne "Printing sensitive data to console"
 fi
 
 # prompting user to enter password
