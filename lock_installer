@@ -2,7 +2,7 @@
 
 echo -ne "Welcome to Lock Installer"
 echo -e "\nPlease select from the following: "
-echo -e "   [1] Set password + install"
+echo -e "   [1] Install"
 echo -e "   [2] Change password"
 echo -e "   [3] Remove all protected data"
 echo -e "   [4] Uninstall"

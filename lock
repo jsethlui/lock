@@ -9,7 +9,7 @@ echo -e "\n"
 # end of title screen
 
 # getting options from user
-while getopts "aevnh" option; do
+while getopts ":aevnh" option; do
     case $option in
         a) # all
             all_flag=1
@@ -40,19 +40,23 @@ if [[ $# -eq 0 ]]; then
     echo -ne "\nPlease select the text editor shell: "
     read user_text_editor_input
     case $user_text_editor_input in
-    1) # emacs
+    0) # emacs
         emacs_flag=1
         ;;
-    2) #vim
+    1) #vim
         vim_flag=1
         ;;
-    3) #nano
+    2) #nano
         nano_flag=1
         ;;
     *) # default -> error
         error_flag=1
         ;;
     esac
+fi
+
+if [[ $# -eq 1 ]]; then
+    error_flag=1
 fi
 
 # error flag set
@@ -112,20 +116,20 @@ echo -ne '\n'
 
 # opening with text editor
 if [[ emacs_flag -eq 1 ]]; then
-    chmod 444 data.txt
+    chmod 777 data.txt # read and write permissions set
     emacs data.txt
 elif [[ vim_flag -eq 1 ]]; then
-    chmod 444 data.txt
+    chmod 777 data.txt # read and write permissions set
     vim data.txt
 elif [[ nano_flag -eq 1 ]]; then
-    chmod 444 data.txt
+    chmod 777 data.txt # read and write permissions set
     nano data.txt
 elif [[ all_flag -eq 1 ]]; then
-    chmod 444 data.txt
+    chmod 777 data.txt # read and write permissions set
     cat data.txt | less
 fi
 
 
 echo -e "\nExiting..."
-chmod 333 data.txt
+chmod 111 data.txt
 exit 0 # exit success
