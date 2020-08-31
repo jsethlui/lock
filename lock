@@ -2,10 +2,38 @@
 
 declare -r password="pass"
 
+title_screen="
+================================================
+||                                            ||
+||                  WELCOME                   ||
+||                     TO                     ||
+||                                            ||
+||                 .--------.                 ||
+||                / .------. \                ||
+||               / /        \ \               ||  
+||               | |        | |               ||
+||              _| |________| |_              ||
+||            .' |_|        |_| '.            ||
+||            '._____ ____ _____.'            ||
+||            |     .'____'.     |            ||
+||            '.__.'.'    '.'.__.'            ||
+||            '.__  |      |  __.'            ||
+||            |   '.'.____.'.'   |            ||
+||            '.____'.____.'____.'            ||
+||            '.________________.'            ||
+||                                            ||
+||                    LOCK                    ||
+||                                            ||
+================================================
+      Conveniently and safely store links, 
+         passwords, and sensitive data
+             through user password
+                 authentication
+"
+
 # start of title screen
 clear
-cat title_screen.txt
-echo -e "\n"
+echo "$title_screen"
 # end of title screen
 
 # getting options from user
@@ -112,16 +140,16 @@ echo -ne '\n'
 
 # opening with text editor
 if [[ emacs_flag -eq 1 ]]; then
-    chmod 777 data.txt # read and write permissions set
+    chmod 777 data.txt # read, write, and execute permissions set
     emacs data.txt
 elif [[ vim_flag -eq 1 ]]; then
-    chmod 777 data.txt # read and write permissions set
+    chmod 777 data.txt 
     vim data.txt
 elif [[ nano_flag -eq 1 ]]; then
-    chmod 777 data.txt # read and write permissions set
+    chmod 777 data.txt 
     nano data.txt
 elif [[ all_flag -eq 1 ]]; then
-    chmod 777 data.txt # read and write permissions set
+    chmod 777 data.txt 
     cat data.txt | less
 fi
 
@@ -130,6 +158,6 @@ if [[ -n $(find . -name "data.txt~") ]]; then
     rm data.txt~
 fi
 
-echo -e "\nExiting..."
+echo -e "Exiting..."
 chmod 111 data.txt
 exit 0 # exit success
