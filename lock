@@ -55,10 +55,6 @@ if [[ $# -eq 0 ]]; then
     esac
 fi
 
-if [[ $# -eq 1 ]]; then
-    error_flag=1
-fi
-
 # error flag set
 if [[ error_flag -eq 1 ]]; then
     echo -ne "\nError: invalid option, refer to help page using lock -h\n"
@@ -129,6 +125,10 @@ elif [[ all_flag -eq 1 ]]; then
     cat data.txt | less
 fi
 
+# deleting file named "data.txt~" (only occurs if text editor is Emacs)
+if [[ -n $(find . -name "data.txt~") ]]; then
+    rm data.txt~
+fi
 
 echo -e "\nExiting..."
 chmod 111 data.txt
