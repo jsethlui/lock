@@ -46,6 +46,5 @@ h`Show help page`
 
 # To Do:
 
-- add encrpytion / decryption using GPG or openssl
+- add decryption using GPG or openssl
 - complete Lock Installer
-- Add titlescreen as variable in lock script
