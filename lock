@@ -1,6 +1,7 @@
+
 #!/usr/bin/env bash
 
-declare -r password="pass"
+password="pass"     # password to open data.txt
 
 title_screen="
 ================================================
@@ -37,7 +38,7 @@ echo "$title_screen"
 # end of title screen
 
 # getting options from user
-while getopts ":aevnh" option; do
+while getopts ":aevnhM" option; do
     case $option in
         a) # all
             all_flag=1
@@ -54,34 +55,14 @@ while getopts ":aevnh" option; do
         h) # help flag
             help_flag=1
             ;;
+        M) # master flag
+            master_flag=1
+            ;;
         *)  # default
             error_flag=1
             ;;
     esac
 done
-
-# detecting if any arguments are selected
-if [[ $# -eq 0 ]]; then
-    echo -ne "[0] Emacs"
-    echo -ne "\n[1] Vim"
-    echo -ne "\n[2] Nano"
-    echo -ne "\nPlease select the text editor shell: "
-    read user_text_editor_input
-    case $user_text_editor_input in
-    0) # emacs
-        emacs_flag=1
-        ;;
-    1) #vim
-        vim_flag=1
-        ;;
-    2) #nano
-        nano_flag=1
-        ;;
-    *) # default -> error
-        error_flag=1
-        ;;
-    esac
-fi
 
 # error flag set
 if [[ error_flag -eq 1 ]]; then
@@ -116,40 +97,37 @@ if [[ nano_flag -eq 1 ]]; then
     echo -ne "Opening sensitive data using Nano"
 fi
 
+# if all flag set
 if [[ all_flag -eq 1 ]]; then
     echo -ne "Printing sensitive data to console"
 fi
 
-# prompting user to enter password
-while : ; do
-    echo -en "\nEnter Password: "
-    read -s user_password
-    [[ $user_password == $password ]] || echo -en "\n   Error: incorrect password"  
-    [[ $user_password != $password ]] || break  # terminating condition
-done
+# if all flag set
+if [[ master_flag -eq 1 ]]; then
+    echo -ne "master"
+fi
+
+echo -ne "\nPassword: "
+openssl enc -aes-256-cbc -d -in data.txt.enc -out data.txt -pass stdin
 
 # opening with text editor of choice
 echo -ne "\nSuccess. Now loading...\n"
-echo -ne '[######...................]   33%  \r'
+echo -ne '[#########..................]   33%  \r'
 sleep 1
-echo -ne '[##############...........]   66%  \r'
+echo -ne '[##################.........]   66%  \r'
 sleep 1
-echo -ne '[#########################]   100% \r'
+echo -ne '[###########################]   100% \r'
 sleep 1
 echo -ne '\n'
 
 # opening with text editor
 if [[ emacs_flag -eq 1 ]]; then
-    chmod 777 data.txt # read, write, and execute permissions set
     emacs data.txt
 elif [[ vim_flag -eq 1 ]]; then
-    chmod 777 data.txt 
     vim data.txt
 elif [[ nano_flag -eq 1 ]]; then
-    chmod 777 data.txt 
     nano data.txt
 elif [[ all_flag -eq 1 ]]; then
-    chmod 777 data.txt 
     cat data.txt | less
 fi
 
@@ -158,6 +136,4 @@ if [[ -n $(find . -name "data.txt~") ]]; then
     rm data.txt~
 fi
 
-echo -e "Exiting..."
-chmod 111 data.txt
 exit 0 # exit success
