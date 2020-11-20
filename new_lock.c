@@ -5,7 +5,7 @@
 #include <termios.h>
 
 const int SIZE = 1024;
-const int CAESAR_KEY = 3;
+const int CAESAR_KEY = 25283;   // random prime number
 const char* PASSWORDS_FILE_NAME = "data.txt";
 
 void get_password(char password[]) {
@@ -35,9 +35,9 @@ void get_password(char password[]) {
 
 int check_encryption_flag() {
     char encryption_flag_char;
-    FILE* fp = popen("head -1 data.txt", "r");
-    fscanf(fp, "%c", &encryption_flag_char);
-    pclose(fp);
+    FILE* a_file = popen("head -1 data.txt", "r");
+    fscanf(a_file, "%c", &encryption_flag_char);
+    pclose(a_file);
     // printf("Char: %s\n", &encryption_flag_char);
     if (encryption_flag_char == 'A') {  // if success
         printf("%c\n", encryption_flag_char);
@@ -48,19 +48,34 @@ int check_encryption_flag() {
     }
 }
 
-void encrypt() {
-
+void read_and_encrypt() {
+    FILE* a_file = fopen(PASSWORDS_FILE_NAME, "r");
+    if (a_file == NULL) {
+        fprintf(stderr, "Error: cannot read data.txt");
+        exit(EXIT_FAILURE);
+    }
+    char line[SIZE];
+    while (fgets(line, sizeof(line), a_file)) {
+        printf("%s", line);     // line is of type string
+        int i;
+        for (i = 0; i < strlen(line); i++) {
+            // printf("%c ", line[i]);
+            line[i] += CAESAR_KEY;
+            printf("%c" , line[i]);
+        }
+    }
+    fclose(a_file);
 }
 
-void decrypt() {
-    
+void decrypt_and_decrypt() {
+
 }
 
 int main(int argc, char* argv[]) {
     if (check_encryption_flag()) { // if data.txt is somehow unencrypted
         fprintf(stderr, "Error: file is already somehow unencrypted\n");
         printf("Forcing data.txt to be encrypted\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     int c;
@@ -68,6 +83,8 @@ int main(int argc, char* argv[]) {
 //    int clear_screen = system("clear");
 
     // check if flag in data.txt is encrypted
+    read_and_encrypt();
+
     while (1) {
         int option_index;
         option_index = 0;
@@ -103,7 +120,7 @@ int main(int argc, char* argv[]) {
                 break;
             case '?':
                 fprintf(stderr, "Error: incorrect usage\n");
-                exit(0);
+                exit(EXIT_FAILURE);
             default:
                 abort();
             }
@@ -133,20 +150,6 @@ int main(int argc, char* argv[]) {
     if (all_flag) {
         printf("all flag\n");
     }
-    // int read_data = system("cat data.txt | less");
-    // int current_char;
-    // const int key = 3;
-    // FILE* file;
-    // file = fopen(PASSWORDS_FILE_NAME, "r");
-    // if (file) {
-    //     while ((c = getc(file)) != EOF) {
-    //         c = c + key;
-    //         putchar(c);
-    //     }
-    //     fclose(file);
-    // }
 
-    // setting encryption flag before exiting process
-
-    exit(0);
+    exit(EXIT_SUCCESS);
 }
