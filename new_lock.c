@@ -9,7 +9,7 @@ const int SIZE = 1024;
 const int CAESAR_KEY = 1;   // random prime number  25283
 const char* DATA_FILE_NAME = "data.txt";
 const char* DATA_OUTPUT_FILE_NAME = "output_data.txt";
-const char PASS[] = "test";
+const char PASS[SIZE] = "test";
 
 void get_password(char password[]) {
     static struct termios old_termios, new_termios;
@@ -41,7 +41,6 @@ int check_encryption_flag() {
     FILE* a_file = popen("head -1 data.txt", "r");
     fscanf(a_file, "%s", &encryption_flag_char);
     pclose(a_file);
-    printf("Char: %s\n", &encryption_flag_char);
     if (encryption_flag_char == 'A') {  // if success
         return EXIT_SUCCESS;
     } else {    // if error
@@ -140,21 +139,29 @@ int main(int argc, char* argv[]) {
             }
     }
 
-    // check if flag in data.txt is encrypted
     if (check_encryption_flag()) { // if data.txt is somehow unencrypted
         fprintf(stderr, "Error: file is already somehow unencrypted\n");
         printf("Forcing data.txt to be encrypted\n");
+
+        // FILE* open_file = fopen(DATA_FILE_NAME, "a");
+        // fprintf(open_file, "%s", "A");
+        // fclose(open_file);
+        
         exit(EXIT_FAILURE);
     }
     read_and_encrypt();
 
-    // char password[SIZE];
-    // printf("\nEnter Password: ");
-    // get_password(password);
-    // printf("\nUser Password:  %s\n", password);
-    // printf("Const Password: %s\n", PASS);
+    char password[SIZE];
+    printf("\nEnter Password: ");
+    get_password(password);
+    printf("\nUser Password:  %s\n", password);
+    printf("Const Password: %s\n", PASS);
+    if (strcmp(password, PASS)) {  // if password is incorrect
+        fprintf(stderr, "Error: incorrect password\n");
+        exit(EXIT_FAILURE);
+    }
 
-
+    // if password is correct, check options (if any)
     if (emacs_flag) {
         int open_with_emacs = system("emacs data.txt");
     }
