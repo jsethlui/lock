@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -5,8 +6,10 @@
 #include <termios.h>
 
 const int SIZE = 1024;
-const int CAESAR_KEY = 25283;   // random prime number
-const char* PASSWORDS_FILE_NAME = "data.txt";
+const int CAESAR_KEY = 1;   // random prime number  25283
+const char* DATA_FILE_NAME = "data.txt";
+const char* DATA_OUTPUT_FILE_NAME = "output_data.txt";
+const char PASS[] = "test";
 
 void get_password(char password[]) {
     static struct termios old_termios, new_termios;
@@ -36,12 +39,10 @@ void get_password(char password[]) {
 int check_encryption_flag() {
     char encryption_flag_char;
     FILE* a_file = popen("head -1 data.txt", "r");
-    fscanf(a_file, "%c", &encryption_flag_char);
+    fscanf(a_file, "%s", &encryption_flag_char);
     pclose(a_file);
-    // printf("Char: %s\n", &encryption_flag_char);
+    printf("Char: %s\n", &encryption_flag_char);
     if (encryption_flag_char == 'A') {  // if success
-        printf("%c\n", encryption_flag_char);
-        printf("sucess\n");
         return EXIT_SUCCESS;
     } else {    // if error
         return EXIT_FAILURE;
@@ -49,7 +50,34 @@ int check_encryption_flag() {
 }
 
 void read_and_encrypt() {
-    FILE* a_file = fopen(PASSWORDS_FILE_NAME, "r");
+    // opening data.txt
+    FILE* open_file = fopen(DATA_FILE_NAME, "r");
+    if (open_file == NULL) {
+        fprintf(stderr, "Error: cannot read data.txt");
+        exit(EXIT_FAILURE);
+    }
+
+    // opening output_data.txt
+    FILE* output_file = fopen(DATA_OUTPUT_FILE_NAME, "w");
+    if (output_file == NULL) {
+        printf(stderr, "Error: cannot read output_data.txt");
+        exit(EXIT_FAILURE); 
+    }
+
+    char line[SIZE];
+    while (fgets(line, sizeof(line), open_file)) {
+        unsigned long size = strlen(line);
+        for (int i = 0; i < size; i++) {
+            line[i] += CAESAR_KEY;
+            fprintf(output_file, "%c", line[i]);  // writing encrpyed char
+        }
+    }
+    fclose(open_file);
+    fclose(output_file);
+}
+
+void read_and_decrypt() {
+    FILE* a_file = fopen(DATA_FILE_NAME, "r");
     if (a_file == NULL) {
         fprintf(stderr, "Error: cannot read data.txt");
         exit(EXIT_FAILURE);
@@ -60,36 +88,25 @@ void read_and_encrypt() {
         int i;
         for (i = 0; i < strlen(line); i++) {
             // printf("%c ", line[i]);
-            line[i] += CAESAR_KEY;
+            line[i] -= CAESAR_KEY;
             printf("%c" , line[i]);
         }
     }
-    fclose(a_file);
 }
 
-void decrypt_and_decrypt() {
+void write_line_by_line() {
 
 }
 
 int main(int argc, char* argv[]) {
-    if (check_encryption_flag()) { // if data.txt is somehow unencrypted
-        fprintf(stderr, "Error: file is already somehow unencrypted\n");
-        printf("Forcing data.txt to be encrypted\n");
-        exit(EXIT_FAILURE);
-    }
-
     int c;
-    int emacs_flag, nano_flag, vim_flag, help_flag, all_flag;
+    int emacs_flag, nano_flag, vim_flag, help_flag;
 //    int clear_screen = system("clear");
-
-    // check if flag in data.txt is encrypted
-    read_and_encrypt();
 
     while (1) {
         int option_index;
         option_index = 0;
         static struct option long_options[] = {
-            {"all", no_argument, NULL, 'a'},
             {"emacs", no_argument, NULL, 'e'},
             {"nano", no_argument, NULL, 'n'},
             {"vim", no_argument, NULL, 'v'},
@@ -103,9 +120,6 @@ int main(int argc, char* argv[]) {
         }
 
         switch (c) {
-            case 'a':
-                all_flag = 1;
-                break;
             case 'e':
                 emacs_flag = 1;
                 break;
@@ -126,14 +140,20 @@ int main(int argc, char* argv[]) {
             }
     }
 
-    // char password[SIZE];
-    // printf("Password: ");
-    // get_password(password);
-    // printf("%s", password);
-
-    if (all_flag) {
-
+    // check if flag in data.txt is encrypted
+    if (check_encryption_flag()) { // if data.txt is somehow unencrypted
+        fprintf(stderr, "Error: file is already somehow unencrypted\n");
+        printf("Forcing data.txt to be encrypted\n");
+        exit(EXIT_FAILURE);
     }
+    read_and_encrypt();
+
+    // char password[SIZE];
+    // printf("\nEnter Password: ");
+    // get_password(password);
+    // printf("\nUser Password:  %s\n", password);
+    // printf("Const Password: %s\n", PASS);
+
 
     if (emacs_flag) {
         int open_with_emacs = system("emacs data.txt");
@@ -145,10 +165,6 @@ int main(int argc, char* argv[]) {
 
     if (vim_flag) {
         int open_with_emacs = system("vim data.txt");
-    }
-
-    if (all_flag) {
-        printf("all flag\n");
     }
 
     exit(EXIT_SUCCESS);
