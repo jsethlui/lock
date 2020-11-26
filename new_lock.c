@@ -10,6 +10,33 @@ const int CAESAR_KEY = 1;   // random prime number  25283
 const char* DATA_FILE_NAME = "data.txt";
 const char* DATA_OUTPUT_FILE_NAME = "output_data.txt";
 const char PASS[SIZE] = "test";
+const char* title_screen = "                    \
+\n================================================ \
+\n||                                            || \
+\n||                  WELCOME                   || \
+\n||                     TO                     || \
+\n||                                            || \
+\n||                 .--------.                 || \
+\n||                / .------. \\                || \
+\n||               / /        \\ \\               || \
+\n||               | |        | |               || \
+\n||              _| |________| |_              || \
+\n||            .' |_|        |_| '.            || \
+\n||            '._____ ____ _____.'            || \
+\n||            |     .'____'.     |            || \
+\n||            '.__.'.'    '.'.__.'            || \
+\n||            '.__  |      |  __.'            || \
+\n||            |   '.'.____.'.'   |            || \
+\n||            '.____'.____.'____.'            || \
+\n||            '.________________.'            || \
+\n||                                            || \
+\n||                    LOCK                    || \
+\n||                                            || \
+\n================================================ \
+\n      Conveniently and safely store links,       \
+\n         passwords, and sensitive data           \
+\n             through user password               \
+\n                 authentication                  ";
 
 void get_password(char password[]) {
     static struct termios old_termios, new_termios;
@@ -48,7 +75,7 @@ int check_encryption_flag() {
     }
 }
 
-void read_and_encrypt() {
+void encrypt_data() {
     // opening data.txt
     FILE* open_file = fopen(DATA_FILE_NAME, "r");
     if (open_file == NULL) {
@@ -76,32 +103,32 @@ void read_and_encrypt() {
 }
 
 void read_and_decrypt() {
-    FILE* a_file = fopen(DATA_FILE_NAME, "r");
-    if (a_file == NULL) {
-        fprintf(stderr, "Error: cannot read data.txt");
-        exit(EXIT_FAILURE);
+    // opening output_data.txt
+    FILE* output_file = fopen(DATA_OUTPUT_FILE_NAME, "r");
+    if (output_file == NULL) {
+        printf(stderr, "Error: cannot read output_data.txt");
+        exit(EXIT_FAILURE); 
     }
+
     char line[SIZE];
-    while (fgets(line, sizeof(line), a_file)) {
-        printf("%s", line);     // line is of type string
-        int i;
-        for (i = 0; i < strlen(line); i++) {
-            // printf("%c ", line[i]);
+    while (fgets(line, sizeof(line), output_file)) {
+        printf("test\n");
+        unsigned long size = strlen(line);
+        for (int i = 0; i < size; i++) {
             line[i] -= CAESAR_KEY;
-            printf("%c" , line[i]);
+            //fprintf(output_file, "%c", line[i]);  // writing encrpyed char
+            printf("%c", line[i]);
         }
     }
-}
-
-void write_line_by_line() {
-
+    fclose(output_file);
 }
 
 int main(int argc, char* argv[]) {
     int c;
     int emacs_flag, nano_flag, vim_flag, help_flag;
-//    int clear_screen = system("clear");
 
+    int clear_screen = system("clear");
+    printf("%s", title_screen);
     while (1) {
         int option_index;
         option_index = 0;
@@ -141,25 +168,18 @@ int main(int argc, char* argv[]) {
 
     if (check_encryption_flag()) { // if data.txt is somehow unencrypted
         fprintf(stderr, "Error: file is already somehow unencrypted\n");
-        printf("Forcing data.txt to be encrypted\n");
-
-        // FILE* open_file = fopen(DATA_FILE_NAME, "a");
-        // fprintf(open_file, "%s", "A");
-        // fclose(open_file);
-        
         exit(EXIT_FAILURE);
     }
-    read_and_encrypt();
 
     char password[SIZE];
-    printf("\nEnter Password: ");
+    printf("\n\nEnter Password: ");
     get_password(password);
-    printf("\nUser Password:  %s\n", password);
-    printf("Const Password: %s\n", PASS);
     if (strcmp(password, PASS)) {  // if password is incorrect
         fprintf(stderr, "Error: incorrect password\n");
         exit(EXIT_FAILURE);
     }
+
+    read_and_decrypt();
 
     // if password is correct, check options (if any)
     if (emacs_flag) {
@@ -174,5 +194,7 @@ int main(int argc, char* argv[]) {
         int open_with_emacs = system("vim data.txt");
     }
 
+    encrypt_data();
+    printf("\n");
     exit(EXIT_SUCCESS);
 }
