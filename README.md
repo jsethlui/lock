@@ -47,4 +47,6 @@ h`Show help page`
 # To Do:
 
 - add decryption using GPG or openssl
-- complete Lock Installer
+  - currently uses Caeser Cipher using large prime number
+  - modify chmod permissions as second layer of security
+- create Master software that allows for changing / recovering passwords  
