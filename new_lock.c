@@ -88,14 +88,14 @@ void encrypt_data() {
     // opening output_data.txt
     FILE* output_file = fopen(DATA_OUTPUT_FILE_NAME, "w");
     if (output_file == NULL) {
-        printf(stderr, "Error: cannot read output_data.txt");
+        fprintf(stderr, "Error: cannot read output_data.txt");
         exit(EXIT_FAILURE); 
     }
 
     char line[SIZE];
     while (fgets(line, sizeof(line), open_file)) {
         unsigned long size = strlen(line);
-        for (int i = 0; i < size; i++) {
+        for (unsigned long i = 0; i < size; i++) {
             line[i] += CAESAR_KEY;
             fprintf(output_file, "%c", line[i]);  // writing encrpyed char
         }
@@ -108,7 +108,7 @@ void read_and_decrypt() {
     // opening output_data.txt
     FILE* output_file = fopen(DATA_OUTPUT_FILE_NAME, "r");
     if (output_file == NULL) {
-        printf(stderr, "Error: cannot read output_data.txt");
+        fprintf(stderr, "Error: cannot read output_data.txt");
         exit(EXIT_FAILURE); 
     }
 
@@ -116,7 +116,7 @@ void read_and_decrypt() {
     while (fgets(line, sizeof(line), output_file)) {
         printf("test\n");
         unsigned long size = strlen(line);
-        for (int i = 0; i < size; i++) {
+        for (unsigned long i = 0; i < size; i++) {
             line[i] -= CAESAR_KEY;
             //fprintf(output_file, "%c", line[i]);  // writing encrpyed char
             printf("%c", line[i]);
@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
     int c;
     int emacs_flag, nano_flag, vim_flag, help_flag;
 
-    int clear_screen = system("clear");
+    int clear_screen _U_ = system("clear");
     printf("%s", title_screen);
     while (1) {
         int option_index;
@@ -181,7 +181,7 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (argc == 1) {
+    if (argc == 1) {    // if no args are provided
         printf("\n========================\n");
         read_and_decrypt(); // dcrypt before reading
         printf("\n========================\n");
