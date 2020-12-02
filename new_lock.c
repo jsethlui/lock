@@ -4,9 +4,11 @@
 #include <getopt.h>
 #include <string.h>
 #include <termios.h>
+ 
+#define _U_ __attribute__((unused))     // to surpress warnings from system()
 
 const int SIZE = 1024;
-const int CAESAR_KEY = 1;   // random prime number  25283
+const int CAESAR_KEY = 25283;   // random prime number  25283
 const char* DATA_FILE_NAME = "data.txt";
 const char* DATA_OUTPUT_FILE_NAME = "output_data.txt";
 const char PASS[SIZE] = "test";
@@ -167,7 +169,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (check_encryption_flag()) { // if data.txt is somehow unencrypted
-        fprintf(stderr, "Error: file is already somehow unencrypted\n");
+        fprintf(stderr, "\nError: file is already somehow unencrypted\n");
         exit(EXIT_FAILURE);
     }
 
@@ -175,26 +177,32 @@ int main(int argc, char* argv[]) {
     printf("\n\nEnter Password: ");
     get_password(password);
     if (strcmp(password, PASS)) {  // if password is incorrect
-        fprintf(stderr, "Error: incorrect password\n");
+        fprintf(stderr, "\nError: incorrect password\n");
         exit(EXIT_FAILURE);
     }
 
-    read_and_decrypt();
+    if (argc == 1) {
+        printf("\n========================\n");
+        read_and_decrypt(); // dcrypt before reading
+        printf("\n========================\n");
+    }
 
     // if password is correct, check options (if any)
     if (emacs_flag) {
-        int open_with_emacs = system("emacs data.txt");
+        int open_with_emacs _U_ = system("emacs data.txt");
     }
 
     if (nano_flag) {
-        int open_with_emacs = system("nano data.txt");
+        int open_with_emacs _U_ = system("nano data.txt");
     }
 
     if (vim_flag) {
-        int open_with_emacs = system("vim data.txt");
+        int open_with_emacs _U_ = system("vim data.txt");
     }
 
-    encrypt_data();
-    printf("\n");
+    //int remove_data = system("rm data.txt");
+    //int rename_output_data = system("mv output_data.txt data.txt");
+    encrypt_data();     // encrypt before leaving program
+    printf("\nExiting...\n");
     exit(EXIT_SUCCESS);
 }
