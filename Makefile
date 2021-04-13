@@ -1,13 +1,38 @@
 
-
 CC=gcc
-CFLAGS=-Wall -Wextra
-TARGET=new_lock
+CFLAGS=-lz -g -Wall -Wextra
+MAKEFLAGS += --silent
 
-all : $(TARGET).c 
-	@ $(CC) -g $(CFLAGS) $(TARGET).c -o $(TARGET)
+.PHONY : install
+install : genpass
+	touch vault.txt
+	mv ./genpass /usr/bin
+	mv ./vault /usr/bin
+	echo " *** Success: genpass installed"
 
-.PHONY : clean
-clean:
-	@ rm -f $(TARGET)
-	@ rm -rf $(TARGET).dSYM
+.PHONY : genpass
+genpass :
+	rm genpass
+	chmod +x helper
+	ln helper genpass
+	chmod +x genpass
+	echo " *** Success: genpass built"
+
+.PHONY : remove 
+remove : 	
+	echo "Forcefully removing vault.txt"
+	echo "This action is irreversible"
+	echo "Would you like to continue [y / n]: "
+	read userChoice
+	if [[ userChoice -eq "n" ]]; then
+		echo "Exiting..."
+	fi 
+	echo "Deleting vault.txt"
+	rm -rf vault.txt
+	touch vault.txt
+
+.PHONY : debug 
+debug :
+	echo "testing"
+
+		
